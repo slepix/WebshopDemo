@@ -1,23 +1,52 @@
-# Step 1: Use an official Node.js image as the base image
-FROM node:20.18.0 AS builder
+# Use the official Node.js 20-alpine image as the base for the build stage
+FROM node:20-alpine AS build
 
-# Step 2: Set the working directory
+# Set the working directory
 WORKDIR /app
 
-# Step 3: Copy package.json and package-lock.json (or yarn.lock) for dependency installation
+# Copy only package.json and package-lock.json to install dependencies
 COPY package*.json ./
 
-# Step 4: Install dependencies
-RUN npm install
+# Install only production dependencies first for caching
+RUN npm ci --only=production
 
-# Step 5: Copy the rest of the application code into the container
+# Install development dependencies after to prepare for building
+COPY package*.json ./
+RUN npm ci
+
+# Copy the entire application code to the container
 COPY . .
 
-# Step 6: Build the Next.js app (this will prepare it for SSR)
+# Ensure the public folder exists
+RUN mkdir -p /app/public
+
+# Build the Next.js app
 RUN npm run build
 
-# Step 7: Expose the port on which Next.js will run
+# Prune dev dependencies to minimize the final image
+RUN npm prune --production
+
+
+# Use the official Node.js 18-alpine as the base for the final production image
+FROM node:18-alpine AS runtime
+
+# Set the working directory
+WORKDIR /app
+
+# Copy production dependencies and built application from build stage
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
+
+# Expose port 3000 for the application
 EXPOSE 3000
 
-# Step 8: Start the Next.js server for SSR
-CMD ["npm", "run", "start"]
+# Run the app as a non-root user for security
+USER node
+
+# Set environment to production
+ENV NODE_ENV=production
+
+# Start the Next.js application
+CMD ["npm", "start"]
