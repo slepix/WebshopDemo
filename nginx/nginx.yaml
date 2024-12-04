@@ -32,3 +32,5 @@ spec:
       port: 80          # Exposed service port
       targetPort: 80    # Port on the container
   type: LoadBalancer
+  externalIPs:
+    - 0.0.0.0
