@@ -41,7 +41,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:
-    - host: "*"
+    - host: "*.slepcevic.net"
       http:
         paths:
           - path: /
