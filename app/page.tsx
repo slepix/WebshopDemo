@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -14,8 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { ErrorMessage } from "@/components/ui/error-message";
 import Image from "next/image";
 import Link from "next/link";
-import { getCategories, getFeaturedProducts } from "@/lib/api";
 import type { ApiError } from "@/lib/api";
+import { useClient } from '@/contexts/ApiClientContext';
 
 // Define a type for the category object
 type Category = {
@@ -38,14 +37,15 @@ export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]); // Use Product[] type for state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ApiError | null>(null);
+  const apiClient = useClient();
 
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
       const [categoriesData, productsData] = await Promise.all([
-        getCategories(),
-        getFeaturedProducts(),
+        apiClient.getCategories(),
+        apiClient.getFeaturedProducts(),
       ]);
       setCategories(categoriesData);
       setFeaturedProducts(productsData);

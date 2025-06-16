@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/ui/error-message";
 import Link from "next/link";
-import { getCategories } from "@/lib/api";
 import type { ApiError } from "@/lib/api";
+import { useClient } from "@/contexts/ApiClientContext";
 
 // Define the Category interface
 interface Category {
@@ -19,12 +19,13 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ApiError | null>(null);
+  const apiClient = useClient();
 
   const fetchCategories = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getCategories();
+      const data = await apiClient.getCategories();
       setCategories(data);
     } catch (err) {
       setError({

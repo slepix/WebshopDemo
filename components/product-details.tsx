@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ErrorMessage } from "@/components/ui/error-message";
 import Image from "next/image";
-import { config } from "@/lib/config";
+import { useClient } from "@/contexts/ApiClientContext";
 
 // Define the Product type
 interface Product {
@@ -22,12 +22,13 @@ export default function ProductDetails({ id }: { id: string }) {
   const [product, setProduct] = useState<Product | null>(null); // Use Product type
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const apiClient = useClient();
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${config.api.url}/products/${id}`);
+        const response = await fetch(`${apiClient.url}/products/${id}`);
         if (!response.ok) throw new Error('Failed to fetch product');
         const data: Product = await response.json(); // Type the fetched data
         setProduct(data);
