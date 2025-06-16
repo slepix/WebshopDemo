@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -21,8 +20,8 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import Link from "next/link";
-import { getProducts } from "@/lib/api";
 import type { ApiError } from "@/lib/api";
+import { useClient } from '@/contexts/ApiClientContext';
 
 // Define the Product type
 interface Product {
@@ -39,12 +38,13 @@ export default function ProductsPage() {
   const [sort, setSort] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ApiError | null>(null);
+  const apiClient = useClient();
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getProducts(category, sort);
+      const data = await apiClient.getProducts(category, sort);
       setProducts(data);
     } catch (err) {
       if (err instanceof Error) {

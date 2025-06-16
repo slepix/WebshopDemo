@@ -1,8 +1,16 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-webteam.lke439262.akamai-apl.net/api';
+'use server'
 
-export const config = {
-  api: {
-    url: API_URL,
-    timeout: 8000, // 8 seconds
-  },
-} as const;
+import { connection } from "next/server";
+
+let apiConfig: { apiUrl: string, timeout: number } | null = null;
+
+export async function getApiConfig(){
+  if (!apiConfig) {
+    await connection()
+    apiConfig = {
+      apiUrl: process.env.API_URL || '',
+      timeout: 8000, // 8 seconds
+    };
+  }
+  return apiConfig;
+}
