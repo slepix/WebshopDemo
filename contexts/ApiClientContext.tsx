@@ -25,7 +25,7 @@ export const ApiClientProvider = ({ children, initialConfig }: {
 
 export const useClient = () => {
     const config = useContext(ApiClientContext);
-    if (!config) throw new Error('useConfig must be used within ConfigProvider');
+    if (!config) throw new Error('useClient must be used within ApiClientProvider');
     if (!config.apiUrl) throw new Error('api url must be provided');
     return new ApiClient(config.apiUrl, config.timeout);
 };
