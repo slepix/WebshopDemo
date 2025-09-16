@@ -1,4 +1,4 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-frontend.lke500822.akamai-apl.net/api';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-frontend.lke516711.akamai-apl.net/api';
 
 export const config = {
   api: {
